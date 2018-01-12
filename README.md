@@ -1,10 +1,6 @@
-### git-blame.vim
-
-git blame info
-
 #### Usage
 
-**get blame info of the current buffer**
+> get blame info of the current buffer
 
 function: `git_blame#get_lines_blame`
 
