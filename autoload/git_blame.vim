@@ -3,7 +3,6 @@
 " AUTHOR: 年糕小豆汤 <ooiss@qq.com>
 " License: MIT license
 " ============================================================================
-" fatal: cannot stat path 'auto': No such file or directory
 
 scriptencoding utf-8
 
