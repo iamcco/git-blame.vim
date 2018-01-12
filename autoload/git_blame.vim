@@ -53,7 +53,7 @@ function! git_blame#get_blame(...) abort
     let l:git_dir = l:work_dir . '/.git'
     let l:file_name = fnamemodify(l:file_path, ':s?\v^' . l:work_dir . '/??')
     " save current buffer to temp file
-    silent! execute '%write! ' . s:temp
+    silent! execute '%write !> ' . s:temp . ' 2> /dev/null'
     " join cmd
     let l:cmd = join([
                 \ 'git',
