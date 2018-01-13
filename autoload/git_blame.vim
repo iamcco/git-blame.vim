@@ -6,6 +6,7 @@
 
 scriptencoding utf-8
 
+" temp file for blame
 let s:temp = resolve(tempname()) . '.git_blame'
 
 function! s:is_no_name() abort
@@ -17,6 +18,7 @@ function! s:is_no_name() abort
     return l:res
 endfunction
 
+" get git dir for current file
 function! git_blame#get_git_dir() abort
     return fnamemodify(fnamemodify(finddir('.git', fnameescape(expand('%:p:h')) . ';'), ':p:h'), ':h')
 endfunction
@@ -27,9 +29,7 @@ function! git_blame#parse_blame(line) abort
                 \ 'status': v:true,
                 \ 'input': a:line,
                 \ }
-    if a:line =~? '\v^fatal'
-        let l:res.status = v:false
-    else
+    try
         let l:temp = substitute(a:line, '\v([^\(]*\([^\)]*\)).*$', '\1', '')
         let l:temp = split(l:temp, '(')
         let l:res.commit = get(l:temp, '0', '')
@@ -37,13 +37,16 @@ function! git_blame#parse_blame(line) abort
         let l:res.user = join(l:temp[0:-5], ' ')
         let l:res.date = l:temp[-4:-4][0]
         let l:res.time = l:temp[-3:-3][0]
-    endif
+    catch /.*/
+        let l:res.status = v:false
+    endtry
     return l:res
 endfunction
 
 " get blame of file
 " @params: s_line, e_line, file_path, ext_cmd
 function! git_blame#get_blame(...) abort
+    let l:res = []
     let l:s_line = get(a:, '1', 1)
     let l:e_line = get(a:, '2', '')
     let l:file_path = get(a:, '3', expand('%:p'))
@@ -69,7 +72,10 @@ function! git_blame#get_blame(...) abort
                 \ ], ' ')
     " get blame lines
     let l:git_blame_lines = systemlist(l:cmd)
-    return l:git_blame_lines
+    if !v:shell_error
+        let l:res = l:git_blame_lines
+    endif
+    return l:res
 endfunction
 
 " get blame of current file
