@@ -21,6 +21,12 @@ function! s:timer_start() abort
     let s:timer = timer_start(500, function('s:update_line_blame'))
 endfunction
 
+function! s:timer_stop() abort
+    if exists('s:timer')
+        call timer_stop(s:timer)
+    endif
+endfunction
+
 function! s:update_line_blame(timer) abort
     let b:git_blame_current_line = get(git_blame#get_lines_blame_parse(), '0', '')
     if exists('#User#Git_Blame_Update')
@@ -31,6 +37,7 @@ endfunction
 augroup Git_Blame
     autocmd!
     autocmd CursorHold,CursorHoldI,CursorMoved,CursorMovedI * call s:timer_start()
+    autocmd VimLeavePre * call s:timer_stop()
 augroup END
 
 "-------------------------------------------------------------------------------
