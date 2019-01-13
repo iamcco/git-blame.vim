@@ -28,6 +28,9 @@ function! s:timer_stop() abort
 endfunction
 
 function! s:update_line_blame(timer) abort
+    if get(b:, 'term_title', '') !=# ''
+      return
+    endif
     let b:git_blame_current_line = get(git_blame#get_lines_blame_parse(), '0', '')
     if exists('#User#Git_Blame_Update')
         doautocmd <nomodeline> User Git_Blame_Update
